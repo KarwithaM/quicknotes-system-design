@@ -17,11 +17,14 @@
 ## Architecture Diagram
 
 ```text
-                          [ User / Mobile Client ]
-                          /                      \
-                 (Static) /                        \ (API Traffic)
-                        v                          v
-             [ CDN (HTML/CSS/JS) ]        [ Load Balancer ]
+                              [ User / Mobile Client ]
+                                      |
+                                      v
+                                [ DNS Server ]
+                               /              \
+                      (Static) /                \ (API Traffic)
+                             v                  v
+                  [ CDN (HTML/CSS/JS) ]      [ Load Balancer ]
                                                     |
                                    +----------------+----------------+
                                    v                v                v
@@ -41,6 +44,7 @@
 
 ## Component Explanations
 
+- **DNS:** Translates the domain name (e.g., quicknotes.com) into IP addresses, routing static asset requests to the nearest CDN edge server and API requests to the Load Balancer.
 - **CDN:** Serves static HTML, CSS, and JS files from edge servers to minimize latency.
 - **Load Balancer:** Distributes API traffic evenly across stateless app servers to prevent overload.
 - **App Servers:** Handle business logic and authentication; stateless to allow horizontal scaling.
@@ -51,8 +55,8 @@
 
 ## Request Flows
 
-- **GET /notes:** Client -> LB -> App Server -> Cache (Hit). If miss, App Server -> Read Replica -> Cache -> Client.
-- **POST /notes:** Client -> LB -> App Server -> Primary DB (Write) -> Invalidate Cache -> Client.
+- **GET /notes:** Client -> DNS -> LB -> App Server -> Cache (Hit). If miss, App Server -> Read Replica -> Cache -> Client.
+- **POST /notes:** Client -> DNS -> LB -> App Server -> Primary DB (Write) -> Invalidate Cache -> Client.
 
 ## Trade-offs & Avoiding SPOFs
 
