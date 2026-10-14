@@ -102,6 +102,8 @@ async function deleteNote(id, listItemElement) {
 
   setStatus("Deleting note...", "loading");
   
+    // Note: JSONPlaceholder doesn't actually delete POSTed notes on the server, 
+   // but we remove it from the DOM to simulate a successful deletion for the user.
   try {
     await request(`${API_URL}/${id}`, { method: "DELETE" });
     
